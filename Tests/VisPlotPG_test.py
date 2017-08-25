@@ -1,6 +1,10 @@
-from DataUtils.FileReader import *
-from MachineLearningUtils.UsefulPlots import *
 from sklearn import datasets
+from MachineLearningUtils.UsefulPlots import VisPlotPlayGround
+from matplotlib import cm
+from matplotlib import pyplot as plt
+import pandas as pd
+import  numpy as np
+
 
 
 def main():
