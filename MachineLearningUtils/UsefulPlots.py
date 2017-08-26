@@ -4,7 +4,7 @@ import itertools
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from matplotlib  import cm
-
+ __version__=0.0.4
 
 class _BasePlot():
     """
