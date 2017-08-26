@@ -107,6 +107,12 @@ class VisPlotPlayGround(_BasePlot):
     """
 
     def show_colormap(self,cmap,subplot_info=None):
+        """
+        show the gradiant of cmap
+        :param cmap:
+        :param subplot_info:
+        :return:
+        """
         im = np.outer(np.ones(10), np.arange(100))
         _fig, axes = plt.subplots(2, figsize=(6, 1.5),
                                subplot_kw=dict(xticks=[], yticks=[]))
@@ -118,7 +124,11 @@ class VisPlotPlayGround(_BasePlot):
         return _fig,axes
 
     def grayify_cmap(self, cmap):
-        """Return a grayscale version of the colormap"""
+        """
+        Return a grayscale version of the colormap
+        :param cmap:
+        :return:
+        """
         cmap = cm.get_cmap(cmap)
         colors = cmap(np.arange(cmap.N))
 

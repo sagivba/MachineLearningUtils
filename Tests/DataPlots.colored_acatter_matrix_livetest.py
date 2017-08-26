@@ -14,14 +14,14 @@ def main():
     print (_df.info())
     # exit()
     plotter=DataPlots(df=_df, ggplot=True, cmap=cm.jet)
-    plotter.colored_scatter_matrix(df=None,colored_column_name="target")
+    plotter.colored_scatter_matrix(df=_df,colored_column_name="target")
 
-    diabetes=datasets.load_diabetes()
-    _df= pd.DataFrame(data= np.c_[diabetes['data'], diabetes['target']],
-                     columns= diabetes['feature_names'] + ['target'])
-    print (_df.info())
-    plotter = DataPlots(df=None, ggplot=True, cmap=cm.jet)
-    plotter.colored_scatter_matrix(df=_df, colored_column_name="target")
+    # diabetes=datasets.load_diabetes()
+    # _df= pd.DataFrame(data= np.c_[diabetes['data'], diabetes['target']],
+    #                  columns= diabetes['feature_names'] + ['target'])
+    # print (_df.info())
+    # plotter = DataPlots(df=None, ggplot=True, cmap=cm.jet)
+    # plotter.colored_scatter_matrix(df=_df, colored_column_name="target")
     plt.show()
     return
 
