@@ -18,7 +18,7 @@ playground for visualization (color map and more...)
 
 ### Examples:
 #### UsefulPlots.DataPlots.colored_scatter_matrix:
+     [(show me the code...)](Examples/iris-colored_acatter_matrix.py)
 ![UsefulPlots.colored_scatter_matrix](Examples/iris-colored_acatter_matrix.png)
-[soucre code](Examples/iris-colored_acatter_matrix.py)
 
-#### UsefulPlots.DataPlots.colored_scatter_matrix:
+
