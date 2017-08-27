@@ -1,7 +1,7 @@
 # MachineLearningUtils
 A set of  useful tools for machine learning projects
 
-## UsefulPlots
+## [UsefulPlots](UsefulPlots)
 Asset of useful plots classes:
 - DataPlots
 - VisPlotPlayGround
@@ -15,3 +15,10 @@ Some useful plots for data exploration:
 playground for visualization (color map and more...)
    - show_colormap - Show the gradiant of cmap
    - grayify_cmap  - Return a grayscale version of the colormap
+
+### Examples:
+#### UsefulPlots.DataPlots.colored_scatter_matrix:
+![UsefulPlots.colored_scatter_matrix](Examples/iris-colored_acatter_matrix.png)
+[soucre code](Examples/iris-colored_acatter_matrix.py)
+
+#### UsefulPlots.DataPlots.colored_scatter_matrix:
