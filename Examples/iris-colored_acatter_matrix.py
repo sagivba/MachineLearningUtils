@@ -1,19 +1,19 @@
 from sklearn import datasets
 from MachineLearningUtils.UsefulPlots import DataPlots
-from matplotlib import cm
-from matplotlib import pyplot as plt
-import pandas as pd
-import  numpy as np
+from MachineLearningUtils.DatasetTools import DatasetsTools
+
 
 
 def main():
-
-    iris = datasets.load_iris()
-    _df= pd.DataFrame(data= np.c_[iris['data'], iris['target']],
-                     columns= iris['feature_names'] + ['target'])
-    plotter=DataPlots(df=_df, ggplot=True)
-    fig=plotter.colored_scatter_matrix(df=_df,colored_column_name="target")
+    # load iris data into DataFrame
+    iris_dtst = DatasetsTools(datasets.load_iris)
+    iris_df = iris_dtst.data_as_df()
+    print ("columns: {}".format(list(iris_df)))
+    print (iris_dtst.info)
+    plotter=DataPlots(df=iris_df, ggplot=True)
+    fig=plotter.colored_scatter_matrix(df=iris_df,colored_column_name="Target")
     fig.savefig("iris-colored_acatter_matrix.png")
+
     return
 
 if __name__ == '__main__':
