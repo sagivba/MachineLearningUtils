@@ -288,3 +288,130 @@ class DataPlots(_BasePlot):
             axes[i, j].yaxis.set_visible(True)
 
         return _fig
+
+class EvaluationPlots(_BasePlot):
+    def __init__(self,
+                 df,
+                 actual_lbl,
+                 predicted_lbl,
+                 linear_model_name="",
+                 ggplot=True,
+                 cmap=cm.OrRd
+
+                 ):
+        _BasePlot.__init__(self,df,ggplot,cmap)
+        self.model_name=linear_model_name
+        self.actual_lbl=actual_lbl
+        self.predicted_lbl=predicted_lbl
+
+    def _set_title(self, title):
+        _title = title
+        if not title:
+            _title = self.model_name
+
+    def _set_actual_lbl(self, actual_lbl):
+        _actual_lbl = actual_lbl
+        if not actual_lbl:
+            _actual_lbl = self.actual_lbl
+
+    def _set_predicted_lbl(self,predicted_lbl):
+        _predicted_lbl = predicted_lbl
+        if not predicted_lbl:
+            _predicted_lbl = self.predicted_lbl
+
+    def predicted_vs_actual(self,
+                            df=None,
+                            dot_size=10,
+                            xlim=None,
+                            ylim=None,
+                            title=None,
+                            actual_lbl=None,
+                            predicted_lbl=None
+                            ):
+        """
+        This method creates sctter plot of predicted values vs the actual valus.
+
+        :param df:
+        :param dot_size:
+        :param xlim:
+        :param ylim:
+        :param title:
+        :param actual_lbl:
+        :param predicted_lbl:
+        :return:
+        """
+        _df = self._set_df(df)
+        _title=self._set_title(title)
+        _actual_lbl=self._set_actual_lbl(actual_lbl)
+        _predicted_lbl=self._set_predicted_lbl(predicted_lbl)
+
+        if not xlim:
+            xlim = {"min": _df[_actual_lbl].min(), "max": _df[_actual_lbl].max()}
+            xlim["min"], xlim["max"] = xlim["min"] - abs(0.1 * xlim["min"]), xlim["max"] + abs(0.1 * xlim["max"])
+        if not ylim:
+            ylim = {"min": _df[_predicted_lbl].min(), "max": _df[_predicted_lbl].max()}
+            ylim["min"], ylim["max"] = ylim["min"] - abs(0.1 * ylim["min"]), ylim["max"] + abs(0.1 * ylim["max"])
+
+        ax = _df.plot(self.actual_lbl, self.predicted_lbl,
+                      kind='scatter',
+                      s=dot_size,
+                      xlim=[xlim["min"], xlim["max"]],
+                      ylim=[ylim["min"], ylim["max"]],
+                      title="".format(title))
+
+        ax.plot(np.linspace(xlim["min"], xlim["max"], 2),
+                np.linspace(ylim["min"], ylim["max"], 2),
+                linewidth=3, color='g')
+        return ax
+
+
+    def plot_confusion_matrix(self,
+                              confusion_matrix,
+                              classes_lst,
+                              normalize=True,
+                              title='Confusion Matrix',
+                              number_formating="{:0.2f}"
+                              ):
+        """
+        This function prints and plots a confusion matrix.
+        Normalization can be applied by setting `normalize=True`.
+        """
+        size=len(classes_lst)*1.5
+        plt.gcf().set_size_inches(h=size,w=size)
+
+
+        plt.imshow(confusion_matrix, interpolation='nearest', cmap=self.cmap)
+        plt.title(title)
+        plt.colorbar()
+        tick_marks = np.arange(len(classes_lst))
+        plt.xticks(tick_marks, classes_lst, rotation=45)
+        plt.yticks(tick_marks, classes_lst)
+        _confusion_matrix=confusion_matrix
+        if normalize:
+            _confusion_matrix = _confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
+            print("Normalized confusion matrix:\n{}".format(_confusion_matrix))
+        else:
+            print('Confusion matrix, without normalization:\n{}'.format(_confusion_matrix))
+
+        # print(self.confusion_matrix)
+
+        thresh = _confusion_matrix.max() / 2.0
+        def format_confusion_matrix_cell(val,is_normlize):
+            if is_normlize:
+                txt = str(number_formating+"%").format(100.0 * round(val, 2))
+            else:
+                txt = str(number_formating).format(val)
+            print("{}-->{}".format(val, txt))
+            return txt
+
+
+        for i, j in itertools.product(range(_confusion_matrix.shape[0]), range(_confusion_matrix.shape[1])):
+            txt=format_confusion_matrix_cell(val=_confusion_matrix[i, j], is_normlize=normalize)
+
+            plt.text(j, i, txt,
+                     horizontalalignment="center",
+                     color="white" if _confusion_matrix[i, j] > thresh else "black",)
+
+        plt.tight_layout()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
