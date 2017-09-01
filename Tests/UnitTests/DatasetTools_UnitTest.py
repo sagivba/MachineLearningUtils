@@ -1,7 +1,8 @@
 import unittest
-from MachineLearningUtils.DatasetTools import DatasetsTools
+
 from sklearn import datasets
-import pandas as pd
+
+from MachineLearningUtils.DatasetTools import DatasetsTools
 
 
 class TestDatasetsTools(unittest.TestCase):

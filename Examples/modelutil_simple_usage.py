@@ -1,10 +1,10 @@
-import unittest
+from matplotlib import pyplot as plt
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier
+
 from MachineLearningUtils.DatasetTools import DatasetsTools
 from MachineLearningUtils.ModelsUtils import ModelUtils
 from MachineLearningUtils.UsefulPlots import EvaluationPlots
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from matplotlib import pyplot as plt
-from sklearn import datasets
 
 # load iris data into DataFrame
 prd_lbl, actl_lbl = "PrdictedIrisClass", "IrisClass"

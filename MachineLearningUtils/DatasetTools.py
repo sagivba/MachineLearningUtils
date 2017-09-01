@@ -1,6 +1,6 @@
-from sklearn import datasets
-import pandas as pd
 import hashlib
+
+import pandas as pd
 
 
 class DatasetsTools():

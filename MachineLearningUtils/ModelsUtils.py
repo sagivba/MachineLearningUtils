@@ -1,6 +1,6 @@
 import pandas as pd
 import sklearn
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix
 
 if sklearn.__version__ < "18.0":
     from sklearn.cross_validation import train_test_split as trn_tst_split
@@ -67,7 +67,7 @@ class ModelUtils():
             raise ValueError("actual_lbl can not be one of columns in the columns list")
         self.validate_col_lst(df, self.columns_lst)
         self.train_df, self.test_df = None, None
-        self.train_test_split()
+        self.split_data_to_train_test()
         return
 
     def __set_something(self, thing, self_thing, caller=None, expeted_type=None):
@@ -126,7 +126,7 @@ class ModelUtils():
             raise ValueError("col_lst has columns name that does not exists in the DataFrame columns")
         return True
 
-    def train_test_split(self, df=None, test_size=None):
+    def split_data_to_train_test(self, df=None, test_size=None):
         """
 
         :param df: defualt is self df but you can also give it as parameter
@@ -197,6 +197,11 @@ class ModelUtils():
         if not test_df:
             self.test_df = _df
         return _df
+
+    def split_and_train(self):
+        train_df, test_df = self.split_data_to_train_test()
+        self.train_model()
+        return self.train_df, self.test_df
 
     def confusion_matrix(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
         _tested_df = self._set_tested_df(tested_df)

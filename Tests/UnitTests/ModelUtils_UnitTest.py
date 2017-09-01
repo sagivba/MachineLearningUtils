@@ -1,8 +1,10 @@
 import unittest
+
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier
+
 from MachineLearningUtils.DatasetTools import DatasetsTools
 from MachineLearningUtils.ModelsUtils import ModelUtils
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn import datasets
 
 
 class TestModelUtils(unittest.TestCase):
@@ -65,90 +67,86 @@ class TestModelUtils(unittest.TestCase):
         self.assertRaises(ValueError,
                           lambda: ModelUtils(df=self.iris_df, predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
                           )
-        mu=ModelUtils(df=self.iris_df, clf=self.tree_clf, predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
-        self.assertIsInstance(mu,ModelUtils)
-
+        mu = ModelUtils(df=self.iris_df, clf=self.tree_clf, predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
+        self.assertIsInstance(mu, ModelUtils)
 
     def test_train_test_split(self):
-        mu=self.mu
+        mu = self.mu
         self.assertIsInstance(mu, ModelUtils)
-        #dfualt split
-        train_df, test_df = mu.train_test_split()
-        train_shape=train_df.shape
-        self.assertTrue(train_shape[0]>70)
-        self.assertTrue(train_shape[1] ==5)
+        # dfualt split
+        train_df, test_df = mu.split_data_to_train_test()
+        train_shape = train_df.shape
+        self.assertTrue(train_shape[0] > 70)
+        self.assertTrue(train_shape[1] == 5)
 
         # split another df
-        train_df, test_df = mu.train_test_split(self.boton_df)
+        train_df, test_df = mu.split_data_to_train_test(self.boton_df)
         train_shape = train_df.shape
         self.assertTrue(train_shape[0] > 350)
         self.assertTrue(train_shape[1] == 14)
         # split another test size
-        train_df, test_df = mu.train_test_split(self.boton_df,test_size=0.5)
+        train_df, test_df = mu.split_data_to_train_test(self.boton_df, test_size=0.5)
         train_shape = train_df.shape
-        self.assertTrue(train_shape[0] == list(self.boton_df.shape)[0]*0.5 )
+        self.assertTrue(train_shape[0] == list(self.boton_df.shape)[0] * 0.5)
         self.assertTrue(train_shape[1] == 14)
 
-
-
     def test_train_model_simple(self):
-        mu=self.mu
+        mu = self.mu
         self.assertIsInstance(mu, ModelUtils)
-        train_df, test_df = mu.train_test_split()
+        train_df, test_df = mu.split_data_to_train_test()
         # simple train
-        trained_df=mu.train_model()
+        trained_df = mu.train_model()
         trained_shape = trained_df.shape
-        self.assertEqual(trained_shape[0] , list(self.iris_df.shape)[0] * 0.7)
-        expexted_columns=['sepal_length_cm', 'sepal_width_cm', 'petal_length_cm', 'petal_width_cm', 'IrisClass',
-                          'PrdictedIrisClass']
-        self.assertEquals(list(trained_df),expexted_columns)
+        self.assertEqual(trained_shape[0], list(self.iris_df.shape)[0] * 0.7)
+        expexted_columns = ['sepal_length_cm', 'sepal_width_cm', 'petal_length_cm', 'petal_width_cm', 'IrisClass',
+                            'PrdictedIrisClass']
+        self.assertEquals(list(trained_df), expexted_columns)
 
     def test_train_model_diffrent_df(self):
         # train on diffrent df
-        mu=self.mu
+        mu = self.mu
         self.assertIsInstance(mu, ModelUtils)
-        train_df, test_df = mu.train_test_split()
-        train_df1, test_df1 = mu.train_test_split(test_size=0.8)
+        train_df, test_df = mu.split_data_to_train_test()
+        train_df1, test_df1 = mu.split_data_to_train_test(test_size=0.8)
         trained_df = mu.train_model(train_df=train_df1)
         trained_shape = trained_df.shape
-        self.assertEqual(trained_shape[0] , list(self.iris_df.shape)[0] * 0.2)
+        self.assertEqual(trained_shape[0], list(self.iris_df.shape)[0] * 0.2)
 
     def test_train_model_chosen_columns(self):
         # train on diffrent df
         mu = self.mu
-        chosen_columns=['sepal_length_cm', 'sepal_width_cm']
+        chosen_columns = ['sepal_length_cm', 'sepal_width_cm']
         self.assertIsInstance(mu, ModelUtils)
-        train_df, test_df = mu.train_test_split()
+        train_df, test_df = mu.split_data_to_train_test()
         # choose columns
         trained_df = mu.train_model(columns_lst=chosen_columns)
-        trained_shape = trained_df.shape # trained shape is th orig spe+ predicted column
-        self.assertEqual(trained_shape[1], len(list(self.iris_df))+1)
+        trained_shape = trained_df.shape  # trained shape is th orig spe+ predicted column
+        self.assertEqual(trained_shape[1], len(list(self.iris_df)) + 1)
 
         pass
 
         # def test_test_model(self):
         #     pass
         #
+
     def test_get_X_df_and_y_s_simple(self):
         mu = self.mu
         self.assertIsInstance(mu, ModelUtils)
         # simple split
-        train_df, test_df = mu.train_test_split()
+        train_df, test_df = mu.split_data_to_train_test()
         train_shape = train_df.shape
         self.assertEqual(train_shape[0], list(self.iris_df.shape)[0] * 0.7)
 
     def test_get_X_df_and_y_s_test_size(self):
         mu = self.mu
         self.assertIsInstance(mu, ModelUtils)
-        train_df, test_df = mu.train_test_split(test_size=0.8)
+        train_df, test_df = mu.split_data_to_train_test(test_size=0.8)
         train_shape = train_df.shape
         self.assertEqual(train_shape[0], list(self.iris_df.shape)[0] * 0.2)
 
     def test_get_X_df_and_y_s_other_df(self):
         mu = self.mu
         self.assertIsInstance(mu, ModelUtils)
-        train_df, test_df = mu.train_test_split(df=self.boton_df)
+        train_df, test_df = mu.split_data_to_train_test(df=self.boton_df)
         train_shape = train_df.shape
         self.assertEqual(train_shape[0], round(list(self.boton_df.shape)[0] * 0.7))
-
-
