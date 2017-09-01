@@ -25,6 +25,7 @@ You can create colored_acatter_matrix very easily ( 3 lines of code):
 - split and train the clf
 ```python
         mu.split_and_train()
+```
 - test the model
 ```python
         results_df = mu.test_model()
