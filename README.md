@@ -7,9 +7,10 @@ Set of useful tools for machine learning projects
 #### UsefulPlots.DataPlots.colored_scatter_matrix:
 [(show me the code...)](Examples/iris-colored_acatter_matrix.py)
 ![UsefulPlots.colored_scatter_matrix](Examples/iris-colored_acatter_matrix.png)
+
 #### UsefulPlots.EvaluationPlots.confusion:
 [(Show me the code...)](Examples/modelutil_simple_usage.py)
-![UsefulPlots.colored_scatter_matrix](Examples/iris-colored_acatter_matrix.png)
+![UsefulPlots.colored_scatter_matrix](Examples/confusion_matrix.png)
 ***
 ## ModelUtils
 utils for easier skitlearn classifier handling
