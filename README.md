@@ -11,6 +11,8 @@ Set of useful tools for machine learning projects
 #### UsefulPlots.EvaluationPlots.confusion:
 [(Show me the code...)](Examples/modelutil_simple_usage.py)
 ![UsefulPlots.colored_scatter_matrix](Examples/confusion_matrix.png)
+
+Take a look [here](Examples/README.md) for more useful code examples
 ***
 
 
