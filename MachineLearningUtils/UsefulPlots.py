@@ -11,7 +11,7 @@ __version__ = '0.0.4'
 
 class _BasePlot():
     """
-    collecton of class methos and more for the plots class below
+    collection of class methods and more for the plots class below
     """
 
     def __init__(self, df=None, ggplot=True, cmap=cm.OrRd):
@@ -236,11 +236,13 @@ class DataPlots(_BasePlot):
 
     def colored_scatter_matrix(self, df, colored_column_name, figsize=(12, 12), **kwargs):
         """
-        Plots a scatterplot matrix of subplots.  Each row of "data" is plotted
-        against other rows, resulting in a nrows by nrows grid of subplots with the
-        diagonal subplots labeled with "names".  Additional keyword arguments are
-        passed on to matplotlib's "plot" command. Returns the matplotlib figure
-        object containg the subplot grid."""
+        Plots a scatterplot matrix of subplots.
+        Each row of "data" is plotted against other rows, resulting in a
+        nrows by nrows grid of subplots with the diagonal subplots labeled with "names".
+        Additional keyword arguments are passed on to matplotlib's "plot" command.
+        Returns the matplotlib figure
+        object containg the subplot grid.
+        """
         if not colored_column_name:
             raise ValueError("colored_column_name is missing")
         if not colored_column_name in list(df):
@@ -323,15 +325,15 @@ class EvaluationPlots(_BasePlot):
         if not predicted_lbl:
             _predicted_lbl = self.predicted_lbl
 
-    def predicted_vs_actual(self,
-                            df=None,
-                            dot_size=10,
-                            xlim=None,
-                            ylim=None,
-                            title=None,
-                            actual_lbl=None,
-                            predicted_lbl=None
-                            ):
+    def plot_predicted_vs_actual(self,
+                                 df=None,
+                                 dot_size=10,
+                                 xlim=None,
+                                 ylim=None,
+                                 title=None,
+                                 actual_lbl=None,
+                                 predicted_lbl=None
+                                 ):
         """
         This method creates sctter plot of predicted values vs the actual valus.
 
@@ -392,10 +394,6 @@ class EvaluationPlots(_BasePlot):
         if normalize:
             _confusion_matrix = _confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
             # print("Normalized confusion matrix:\n{}".format(_confusion_matrix))
-        else:
-        # print('Confusion matrix, without normalization:\n{}'.format(_confusion_matrix))
-
-        # print(self.confusion_matrix)
 
         thresh = _confusion_matrix.max() / 2.0
 

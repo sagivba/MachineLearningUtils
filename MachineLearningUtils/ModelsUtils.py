@@ -1,6 +1,6 @@
 import pandas as pd
 import sklearn
-from sklearn.metrics import confusion_matrix
+
 
 if sklearn.__version__ < "18.0":
     from sklearn.cross_validation import train_test_split as trn_tst_split
@@ -203,6 +203,7 @@ class ModelUtils():
         self.train_model()
         return self.train_df, self.test_df
 
+
     def confusion_matrix(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
         _tested_df = self._set_tested_df(tested_df)
         _actual_lbl = self._set_actual_lbl(actual_lbl)
@@ -214,14 +215,14 @@ class ModelUtils():
             raise KeyError(
                 "predicted_lbl{} is not in the columns of in tested_df:{}".format(_predicted_lbl, columns_lst))
 
-        self.cm = confusion_matrix(y_true=_tested_df[_actual_lbl], y_pred=_tested_df[_predicted_lbl])
+        self.cm = sklearn.metrics.confusion_matrix(y_true=_tested_df[_actual_lbl], y_pred=_tested_df[_predicted_lbl])
         return self.cm
 
-    def confusion_matrix(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
-        _tested_df = self._set_tested_df(tested_df)
-        _actulal_lbl = self._set_actual_lbl(actual_lbl)
-        _predicted_lbl = self._set_predicted_lbl(predicted_lbl)
-        return confusion_matrix(y_true=_tested_df[_actulal_lbl], y_pred=_tested_df[_predicted_lbl])
+    # def confusion_matrix(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
+    #     _tested_df = self._set_tested_df(tested_df)
+    #     _actulal_lbl = self._set_actual_lbl(actual_lbl)
+    #     _predicted_lbl = self._set_predicted_lbl(predicted_lbl)
+    #     return confusion_matrix(y_true=_tested_df[_actulal_lbl], y_pred=_tested_df[_predicted_lbl])
 
     def confusion_matrix_as_dataframe(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
         _tested_df = self._set_tested_df(tested_df)
