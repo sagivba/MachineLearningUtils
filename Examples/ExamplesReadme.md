@@ -7,6 +7,7 @@ You can create colored_acatter_matrix very easily ( 3 lines of code):
     fig.savefig("iris-colored_acatter_matrix.png")
 ```
 [show me the complete code](iris-colored_acatter_matrix.py)
+![iris-colored_acatter_matrix](iris-colored_acatter_matrix.png)
 
 ## simple example of iris dataset classification python
 [show me the code](modelutil_simple_usage.py)
@@ -37,5 +38,5 @@ You can create colored_acatter_matrix very easily ( 3 lines of code):
         plt.savefig("confusion_matrix.png", bbox_inches='tight')
 ```
     resulting this plot:
-    ![evaluate results using plot_confusion_matrix](confusion_matrix.png)
+![evaluate results using plot_confusion_matrix](confusion_matrix.png)
 
