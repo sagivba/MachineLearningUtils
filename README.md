@@ -20,13 +20,13 @@ utils for easier skitlearn classifier handling
 ## UsefulPlots
 My toolbox of useful plots classes.
 ### classes:
-- [DataPlots](README.md#class-DataPlots) - plots for data exploration
-- [EvaluationPlots](README.md#class-EvaluationPlots) - Plots that helps to evaluate models
-- [VisPlotPlayGround](README.md#class-EvaluationPlots)
+- [DataPlots](README.md#class-dataplots) - plots for data exploration
+- [EvaluationPlots](README.md#class-evaluationplots) - Plots that helps to evaluate models
+- [VisPlotPlayGround](README.md#class-visplotplayground)
 
 ## DatasetsTools
 ### classes:
-- [DatasetsTools](README.md#class-DatasetsTools)
+- [DatasetsTools](README.md#class-datasetstools)
 
 ***
 # What indide the modules...
