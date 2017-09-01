@@ -12,10 +12,12 @@ Set of useful tools for machine learning projects
 [(Show me the code...)](Examples/modelutil_simple_usage.py)
 ![UsefulPlots.colored_scatter_matrix](Examples/confusion_matrix.png)
 ***
+
+
 ## ModelUtils
 utils for easier skitlearn classifier handling
 ### classes:
-- [ModelUtils](README.md#class-ModelUtils)
+- [ModelUtils](README.md#class-modelutils)
 
 ## UsefulPlots
 My toolbox of useful plots classes.
@@ -29,6 +31,8 @@ My toolbox of useful plots classes.
 - [DatasetsTools](README.md#class-datasetstools)
 
 ***
+
+
 # What indide the modules...
 ## module ModelUtils
 ### class ModelUtils
