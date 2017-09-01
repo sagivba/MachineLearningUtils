@@ -15,18 +15,18 @@ Set of useful tools for machine learning projects
 ## ModelUtils
 utils for easier skitlearn classifier handling
 ### classes:
-- [ModelUtils](READNE.md#class-ModelUtils)
+- [ModelUtils](README.md#class-ModelUtils)
 
 ## UsefulPlots
 My toolbox of useful plots classes.
 ### classes:
-- [DataPlots](READNE.md#class-DataPlots) - plots for data exploration
-- [EvaluationPlots](READNE.md#class-EvaluationPlots) - Plots that helps to evaluate models
-- [VisPlotPlayGround](READNE.md#class-EvaluationPlots)
+- [DataPlots](README.md#class-DataPlots) - plots for data exploration
+- [EvaluationPlots](README.md#class-EvaluationPlots) - Plots that helps to evaluate models
+- [VisPlotPlayGround](README.md#class-EvaluationPlots)
 
 ## DatasetsTools
 ### classes:
-- [DatasetsTools](READNE.md#class-DatasetsTools)
+- [DatasetsTools](README.md#class-DatasetsTools)
 
 ***
 # What indide the modules...
