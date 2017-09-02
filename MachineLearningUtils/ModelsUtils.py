@@ -21,8 +21,8 @@ class ModelUtils():
 
     def __init__(self,
                  df,
-                 clf=None,
-                 clf_name="",
+                 model=None,
+                 model_name="",
                  predicted_lbl=None,
                  actual_lbl=None,
                  columns_lst=[],
@@ -31,23 +31,23 @@ class ModelUtils():
         """
 
         :param df: pandas Dataframe
-        :param clf:
-        :param clf_name: name for the clf object
+        :param model:
+        :param model_name: name for the clf object
         :param predicted_lbl:  name of the column with the predected values
         :param actual_lbl: name of the column with the actual  values (prediced__lbl is tested against)
         :param columns_lst: subset of the df columns names that clf will fit by them
         :param test_size: [0:1.0]
         :param random_state:
         """
-
+        pd.set_option('expand_frame_repr', False)
         self.df = df
-        if not clf:
+        if not model:
             raise ValueError("missing clf")
-        self.clf = clf
-        if clf_name:
-            self.clf_name = clf_name
+        self.model = model
+        if model_name:
+            self.model_name = model_name
         else:
-            self.clf_name = "{}==>{}".format(self.create_clf_name(clf), actual_lbl)
+            self.model_name = "{}==>{}".format(self.create_clf_name(model), actual_lbl)
 
         if columns_lst:
             self.columns_lst = columns_lst
@@ -58,7 +58,7 @@ class ModelUtils():
         self.actual_lbl = actual_lbl
         self.test_size = test_size
         self.random_state = random_state
-        pd.set_option('expand_frame_repr', False)
+
         if (predicted_lbl or actual_lbl) and self.df is None:
             raise ValueError("predicted_lbl or actual_lbl are defined but df is None")
         if predicted_lbl in self.columns_lst:
@@ -105,8 +105,6 @@ class ModelUtils():
     def _set_actual_lbl(self, actual_lbl):
         return self.__set_something(actual_lbl, self.actual_lbl, self._set_actual_lbl.__name__, str)
 
-    def _set_predicted_lbl(self, predicted_lbl):
-        return self.__set_something(predicted_lbl, self.predicted_lbl, self._set_predicted_lbl.__name__, str)
 
     def _set_cm(self, cm):
         return self.__set_something(cm, self.cm, self._set_cm.__name__)
@@ -171,9 +169,9 @@ class ModelUtils():
         X_df, y_s = self.get_X_df_and_y_s(df=_df, columns_lst=_columns_lst, actual_lbl=_actual_lbl)
         self._x_lbl = list(X_df)
         # print list(X_df)
-        self.clf.fit(X_df, y_s)
+        self.model.fit(X_df, y_s)
 
-        pred_df = pd.DataFrame(data={self.predicted_lbl: self.clf.predict(X_df)}, index=_df.index)
+        pred_df = pd.DataFrame(data={self.predicted_lbl: self.model.predict(X_df)}, index=_df.index)
         _df = pd.concat([_df, pred_df], axis=1, join_axes=[_df.index])
         # self._set_train_df(_df)
         # print "{} score is: {}\n".format(self.clf_name, self.clf.score(X_df, y_s))
@@ -190,7 +188,7 @@ class ModelUtils():
         X_df, y_s = self.get_X_df_and_y_s(_df, columns_lst)
 
         #  of course we tont fit test...
-        pred_df = pd.DataFrame(data={self.predicted_lbl: self.clf.predict(X_df)}, index=_df.index)
+        pred_df = pd.DataFrame(data={self.predicted_lbl: self.model.predict(X_df)}, index=_df.index)
 
         _df = pd.concat([_df, pred_df], axis=1, join_axes=[_df.index])
         # print np.log10(_df[self.predicted_lbl]+1)
@@ -232,5 +230,5 @@ class ModelUtils():
 
         return pd.DataFrame(
             _confusion_matrix,
-            index=self.clf.classes_,
-            columns=self.clf.classes_)
+            index=self.model.classes_,
+            columns=self.model.classes_)

@@ -17,7 +17,7 @@ class TestModelUtils(unittest.TestCase):
         self.actl_lbl = "IrisClass"
         self.columns_lst = list(self.iris_df)
         self.columns_lst.pop(-1)
-        self.mu = ModelUtils(df=self.iris_df, clf=self.tree_clf, columns_lst=self.columns_lst,
+        self.mu = ModelUtils(df=self.iris_df, model=self.tree_clf, columns_lst=self.columns_lst,
                              predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
 
     def test__set_df(self):
@@ -53,13 +53,13 @@ class TestModelUtils(unittest.TestCase):
     def test_init(self):
         # df == None
         self.assertRaises(ValueError,
-                          lambda: ModelUtils(df=None, clf=self.tree_clf, columns_lst=self.columns_lst,
+                          lambda: ModelUtils(df=None, model=self.tree_clf, columns_lst=self.columns_lst,
                                              predicted_lbl=self.prd_lbl,
                                              actual_lbl=self.actl_lbl)
                           )
         # # clf == None
         self.assertRaises(ValueError,
-                          lambda: ModelUtils(df=self.iris_df, clf=None, columns_lst=self.columns_lst,
+                          lambda: ModelUtils(df=self.iris_df, model=None, columns_lst=self.columns_lst,
                                              predicted_lbl=self.prd_lbl,
                                              actual_lbl=self.actl_lbl),
                           )
@@ -67,7 +67,7 @@ class TestModelUtils(unittest.TestCase):
         self.assertRaises(ValueError,
                           lambda: ModelUtils(df=self.iris_df, predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
                           )
-        mu = ModelUtils(df=self.iris_df, clf=self.tree_clf, predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
+        mu = ModelUtils(df=self.iris_df, model=self.tree_clf, predicted_lbl=self.prd_lbl, actual_lbl=self.actl_lbl)
         self.assertIsInstance(mu, ModelUtils)
 
     def test_train_test_split(self):

@@ -14,13 +14,13 @@ iris_df = DatasetsTools(datasets.load_iris).data_as_df(target_column_name="IrisC
 tree_clf = DecisionTreeClassifier(max_depth=5, min_samples_split=10, min_samples_leaf=10)
 
 # simple usage
-mu = ModelUtils(df=iris_df, clf=tree_clf, predicted_lbl=prd_lbl, actual_lbl=actl_lbl)
+mu = ModelUtils(df=iris_df, model=tree_clf, predicted_lbl=prd_lbl, actual_lbl=actl_lbl)
 mu.split_and_train()
 results_df = mu.test_model()
 
 # evaluate results using plot_confusion_matrix
 print(mu.confusion_matrix_as_dataframe())
 evp = EvaluationPlots(df=results_df, actual_lbl=mu.actual_lbl, predicted_lbl=mu.predicted_lbl)
-evp.plot_confusion_matrix(confusion_matrix=mu.confusion_matrix(), classes_lst=mu.clf.classes_)
+evp.plot_confusion_matrix(confusion_matrix=mu.confusion_matrix(), classes_lst=mu.model.classes_)
 plt.savefig("confusion_matrix.png", bbox_inches='tight')
 # plt.show()

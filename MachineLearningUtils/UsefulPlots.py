@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib import cm
 from sklearn.preprocessing import MinMaxScaler
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 
 
 class _BasePlot():
@@ -24,12 +24,23 @@ class _BasePlot():
     def use_ggplt(self):
         plt.style.use('ggplot')
 
-    def _set_df(self, df=None):
-        if df is None:
-            _df = df
-        else:
-            _df = self.df
+    def __set_something(self, thing, self_thing, caller=None, expeted_type=None):
+        _thing = thing
+        if _thing is None or not _thing:
+            _thing = self_thing
+        if type is not None and type(_thing) != expeted_type:
+            raise TypeError("{}: type of {} is not {}".format(caller, _thing, expeted_type))
+        return _thing
+
+    def __set_some_df(self, df, self_some_df):
+        _df = df
+        if not isinstance(_df, pd.DataFrame):
+            _df = self_some_df
         return _df
+
+    def _set_df(self, df=None):
+        return self.__set_some_df(df, self.df)
+
 
     @classmethod
     def _set_ax(cls, ax=None):
@@ -300,6 +311,7 @@ class EvaluationPlots(_BasePlot):
                  df,
                  actual_lbl,
                  predicted_lbl,
+                 title=None,
                  linear_model_name="",
                  ggplot=True,
                  cmap=cm.OrRd
@@ -309,21 +321,30 @@ class EvaluationPlots(_BasePlot):
         self.model_name = linear_model_name
         self.actual_lbl = actual_lbl
         self.predicted_lbl = predicted_lbl
+        if title:
+            self.title = title
+        else:
+            self.title = "{}={}".format(linear_model_name, predicted_lbl)
 
-    def _set_title(self, title):
-        _title = title
-        if not title:
-            _title = self.model_name
+    def __set_something(self, thing, self_thing, caller=None, expeted_type=None):
+        _thing = thing
+        if _thing is None or not _thing:
+            _thing = self_thing
+        if type is not None and type(_thing) != expeted_type:
+            raise TypeError("{}: type of {} is not {}".format(caller, _thing, expeted_type))
+        return _thing
+
+    def __set_some_df(self, df, self_some_df):
+        _df = df
+        if not isinstance(_df, pd.DataFrame):
+            _df = self_some_df
+        return _df
 
     def _set_actual_lbl(self, actual_lbl):
-        _actual_lbl = actual_lbl
-        if not actual_lbl:
-            _actual_lbl = self.actual_lbl
+        return self.__set_something(actual_lbl, self.actual_lbl, self._set_actual_lbl.__name__, str)
 
     def _set_predicted_lbl(self, predicted_lbl):
-        _predicted_lbl = predicted_lbl
-        if not predicted_lbl:
-            _predicted_lbl = self.predicted_lbl
+        return self.__set_something(predicted_lbl, self.predicted_lbl, self._set_predicted_lbl.__name__, str)
 
     def plot_predicted_vs_actual(self,
                                  df=None,
