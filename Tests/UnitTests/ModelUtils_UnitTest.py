@@ -47,9 +47,6 @@ class TestModelUtils(unittest.TestCase):
         df = mu._set_test_df(boton_df)
         self.assertEquals(list(df), list(boton_df))
 
-    # def test__set_test_size(self):
-    #     pass
-    #
     def test_init(self):
         # df == None
         self.assertRaises(ValueError,
@@ -97,7 +94,7 @@ class TestModelUtils(unittest.TestCase):
         # simple train
         trained_df = mu.train_model()
         trained_shape = trained_df.shape
-        self.assertEqual(trained_shape[0], list(self.iris_df.shape)[0] * 0.7)
+        self.assertEqual(trained_shape[0] * 1.0, list(self.iris_df.shape)[0] * 0.7)
         expexted_columns = ['sepal_length_cm', 'sepal_width_cm', 'petal_length_cm', 'petal_width_cm', 'IrisClass',
                             'PrdictedIrisClass']
         self.assertEquals(list(trained_df), expexted_columns)

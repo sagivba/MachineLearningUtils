@@ -1,7 +1,6 @@
 import pandas as pd
 import sklearn
 
-
 if sklearn.__version__ < "18.0":
     from sklearn.cross_validation import train_test_split as trn_tst_split
 else:
@@ -16,8 +15,17 @@ class ModelUtils():
     """
 
     @classmethod
-    def create_clf_name(cls, clf):
-        return str(type(clf)).split('.')[-1].split("'")[0]
+    def create_model_name(cls, model):
+        return str(type(model)).split('.')[-1].split("'")[0]
+
+    def verbose(self, msg, caller="", severity="INFO"):
+        if self.is_verbose:
+            print("{:>6} {:<15}: {}".format(severity, caller, msg))
+
+    def __str__(self):
+        lst = list(self.__dict__.items())
+        lst = list(filter(lambda x: not hasattr(x[1], '__iter__'), lst))
+        return str(lst)
 
     def __init__(self,
                  df,
@@ -27,7 +35,9 @@ class ModelUtils():
                  actual_lbl=None,
                  columns_lst=[],
                  test_size=0.3,
-                 random_state=123456):
+                 random_state=123456,
+                 is_verbose=False
+                 ):
         """
 
         :param df: pandas Dataframe
@@ -38,8 +48,10 @@ class ModelUtils():
         :param columns_lst: subset of the df columns names that clf will fit by them
         :param test_size: [0:1.0]
         :param random_state:
+        :param is_verbose: is verbodse mode (mainly for debugging)
         """
         pd.set_option('expand_frame_repr', False)
+        self.is_verbose = is_verbose
         self.df = df
         if not model:
             raise ValueError("missing clf")
@@ -47,7 +59,7 @@ class ModelUtils():
         if model_name:
             self.model_name = model_name
         else:
-            self.model_name = "{}==>{}".format(self.create_clf_name(model), actual_lbl)
+            self.model_name = "{}==>{}".format(self.create_model_name(model), actual_lbl)
 
         if columns_lst:
             self.columns_lst = columns_lst
@@ -66,8 +78,10 @@ class ModelUtils():
         if actual_lbl in self.columns_lst:
             raise ValueError("actual_lbl can not be one of columns in the columns list")
         self.validate_col_lst(df, self.columns_lst)
+        self.verbose(msg="{}".format(self), caller=self.__class__.__name__)
         self.train_df, self.test_df = None, None
-        self.split_data_to_train_test()
+        self.split_data_to_train_test()  # this wiil initialze self.train_df, self.test_df
+
         return
 
     def __set_something(self, thing, self_thing, caller=None, expeted_type=None):
@@ -105,6 +119,8 @@ class ModelUtils():
     def _set_actual_lbl(self, actual_lbl):
         return self.__set_something(actual_lbl, self.actual_lbl, self._set_actual_lbl.__name__, str)
 
+    def _set_predicted_lbl(self, predicted_lbl):
+        return self.__set_something(predicted_lbl, self.predicted_lbl, self._set_predicted_lbl.__name__, str)
 
     def _set_cm(self, cm):
         return self.__set_something(cm, self.cm, self._set_cm.__name__)
@@ -131,6 +147,8 @@ class ModelUtils():
         :param test_size: 0:1.0
         :return:
         """
+        func_name = self.split_and_train.__name__
+
         _df = self._set_df(df)
         _test_size = self._set_test_size(test_size)
 
@@ -139,6 +157,9 @@ class ModelUtils():
             test_size=_test_size,
             random_state=self.random_state
         )
+        msg = "test_size= {}, train_df shape: {}, test_df shape: {}".format(_test_size, self.train_df.shape,
+                                                                            self.test_df.shape)
+        self.verbose(msg=msg, caller=func_name)
         return self.train_df, self.test_df
 
     def get_X_df(self, df):
@@ -201,7 +222,6 @@ class ModelUtils():
         self.train_model()
         return self.train_df, self.test_df
 
-
     def confusion_matrix(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
         _tested_df = self._set_tested_df(tested_df)
         _actual_lbl = self._set_actual_lbl(actual_lbl)
@@ -215,12 +235,6 @@ class ModelUtils():
 
         self.cm = sklearn.metrics.confusion_matrix(y_true=_tested_df[_actual_lbl], y_pred=_tested_df[_predicted_lbl])
         return self.cm
-
-    # def confusion_matrix(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
-    #     _tested_df = self._set_tested_df(tested_df)
-    #     _actulal_lbl = self._set_actual_lbl(actual_lbl)
-    #     _predicted_lbl = self._set_predicted_lbl(predicted_lbl)
-    #     return confusion_matrix(y_true=_tested_df[_actulal_lbl], y_pred=_tested_df[_predicted_lbl])
 
     def confusion_matrix_as_dataframe(self, tested_df=None, actual_lbl=None, predicted_lbl=None):
         _tested_df = self._set_tested_df(tested_df)

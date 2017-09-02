@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import pandas as pd
 from matplotlib import cm
@@ -16,7 +17,7 @@ def main():
     plotter = VisPlotPlayGround(df=_df, ggplot=True, cmap=cm.jet)
     cmaps = [m for m in cm.datad if not m.endswith("_r")]
     print(sorted(cmaps))
-    for c in sorted(cmaps):
+    for c in sorted(cmaps)[0:5]:
         plotter.show_colormap(c)
     plt.show()
 

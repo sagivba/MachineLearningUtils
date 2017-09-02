@@ -20,7 +20,8 @@ results_df = mu.test_model()
 
 # evaluate results using plot_confusion_matrix
 print(mu.confusion_matrix_as_dataframe())
-evp = EvaluationPlots(df=results_df, actual_lbl=mu.actual_lbl, predicted_lbl=mu.predicted_lbl)
-evp.plot_confusion_matrix(confusion_matrix=mu.confusion_matrix(), classes_lst=mu.model.classes_)
-plt.savefig("confusion_matrix.png", bbox_inches='tight')
-# plt.show()
+evp = EvaluationPlots(df=results_df, actual_lbl=actl_lbl, predicted_lbl=prd_lbl)
+evp.plot_confusion_matrix(confusion_matrix=mu.confusion_matrix(), classes_lst=mu.model.classes_,
+                          title="Iris-confusion_matrix")
+# plt.savefig("confusion_matrix.png", bbox_inches='tight')
+plt.show()

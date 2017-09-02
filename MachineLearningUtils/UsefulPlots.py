@@ -1,5 +1,4 @@
 import itertools
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -14,7 +13,12 @@ class _BasePlot():
     collection of class methods and more for the plots class below
     """
 
-    def __init__(self, df=None, ggplot=True, cmap=cm.OrRd):
+    def verbose(self, msg, caller="", severity="INFO"):
+        if self.is_verbose:
+            print("{:>6} {:<15}: {}".format(severity, caller, msg))
+
+    def __init__(self, df=None, ggplot=True, cmap=cm.OrRd, is_verbose=False):
+        self.is_verbose = is_verbose
         self.df = df
         self.ggplot = ggplot
         if ggplot:
@@ -22,6 +26,8 @@ class _BasePlot():
         self.cmap = cmap
 
     def use_ggplt(self):
+        caller = self.use_ggplt.__name__
+        self.verbose("use ggplot", caller)
         plt.style.use('ggplot')
 
     def __set_something(self, thing, self_thing, caller=None, expeted_type=None):
@@ -139,6 +145,7 @@ class VisPlotPlayGround(_BasePlot):
         :param subplot_info:
         :return:
         """
+        # self.verbose(self.show_colormap.__name__)
         im = np.outer(np.ones(10), np.arange(100))
         _fig, axes = plt.subplots(2, figsize=(6, 1.5),
                                   subplot_kw=dict(xticks=[], yticks=[]))
@@ -155,6 +162,7 @@ class VisPlotPlayGround(_BasePlot):
         :param cmap:
         :return:
         """
+        self.verbose("{} - {}".format(self.show_colormap.__name__, cmap))
         cmap = cm.get_cmap(cmap)
         colors = cmap(np.arange(cmap.N))
 
@@ -185,7 +193,8 @@ class DataPlots(_BasePlot):
         :param color_func: input pandas series object - return pandas series object  of colors
         :return:
         """
-
+        func_name = self.colored_scatter.__name__
+        _figsize = figsize
         if figsize is not None and ax is not None:
             raise ValueError("both ax and figsize were  given - only one should be used.")
         elif figsize is not None:
@@ -193,6 +202,7 @@ class DataPlots(_BasePlot):
             _fig = self._set_fig(fig=None, figsize=_figsize)
             _ax = self._set_ax(_fig.gca())
         else:
+
             _ax = self._set_ax(ax)
 
         _color_func = self._set_color_func(color_func)
@@ -212,9 +222,14 @@ class DataPlots(_BasePlot):
         # print( pd.Series(colors).unique())
         _ax.scatter(x, y, s=s, c=colors, marker='o', cmap=self.cmap);
 
+        self.verbose("s={}, x_lable = {:15}, y_lable = {:15}, title= {:15}".format(s, _ax.xaxis.label._text,
+                                                                                   _ax.yaxis.label._text,
+                                                                                   _ax.title._text), func_name)
         return _ax
 
     def plot_column(self, data_column, fig=None, figsize=None):
+        func_name = self.colored_scatter.__name__
+
         plt.style.use('ggplot')
         plot_dict = {
             "object": [{"kind": "bar"}],
@@ -237,9 +252,19 @@ class DataPlots(_BasePlot):
                 _df = _data.apply(pd.value_counts)
                 x_val = list(_df)
                 y_val = _df.sum()
-                axes[i].set_title("{}-{}-{}".format(_data.name, _kind, 'count'))
+                ax_title = "{}-{}-{}".format(_data.name, _kind, 'count')
+                axes[i].set_title(ax_title)
+                _ylim = [0, 1.1 * max(y_val)]
+                axes[i].set_ylim(_ylim)
+                self.verbose("axes[{}] title={} ylim={}".format(i, ax_title, _ylim))
                 y_val.plot(kind='bar', title=_data.name + ' count', ax=axes[i])
             elif str(_data.dtype) not in ['object', 'bool']:
+                if (_kind == 'box'):
+                    _min = min(0.9 * min(data_column), 1.1 * min(data_column), -0.1)
+                    _max = max(0.9 * max(data_column), 1.1 * max(data_column), 1.1)
+                    _ylim = (_min, _max)
+                    self.verbose("kind={}, ylim={}".format(_kind, _ylim), func_name)
+                    axes[i].set_ylim(_ylim)
                 _data.plot(kind=_kind, ax=axes[i])
             else:
                 return None
@@ -254,6 +279,7 @@ class DataPlots(_BasePlot):
         Returns the matplotlib figure
         object containg the subplot grid.
         """
+        func_name = self.colored_scatter_matrix.__name__
         if not colored_column_name:
             raise ValueError("colored_column_name is missing")
         if not colored_column_name in list(df):
@@ -264,6 +290,7 @@ class DataPlots(_BasePlot):
         _z2color = _df[colored_column_name]
         _df = _df.drop(colored_column_name, axis=1)
 
+
         # plot only numeric type
         numeric_dtypes = ('int64', 'float64', 'int32', 'float32')
         for i, col_x in enumerate(_df):
@@ -271,8 +298,10 @@ class DataPlots(_BasePlot):
                 _df = _df.drop(col_x, axis=1)
 
         _nrecords, _ncols = _df.shape
+        self.verbose(
+            "number of numeric columns: {}, number of records: {}, figsize={}".format(_ncols, _nrecords, _figsize),
+            func_name)
 
-        _figsize = self._set_figsize(figsize)
         _fig, axes = plt.subplots(nrows=_ncols, ncols=_ncols, figsize=_figsize)
         _fig.subplots_adjust(hspace=0.05, wspace=0.05)
         # print(_df.head())
@@ -314,10 +343,10 @@ class EvaluationPlots(_BasePlot):
                  title=None,
                  linear_model_name="",
                  ggplot=True,
-                 cmap=cm.OrRd
-
+                 cmap=cm.OrRd,
+                 is_verbose=False
                  ):
-        _BasePlot.__init__(self, df, ggplot, cmap)
+        _BasePlot.__init__(self, df, ggplot, cmap, is_verbose)
         self.model_name = linear_model_name
         self.actual_lbl = actual_lbl
         self.predicted_lbl = predicted_lbl
@@ -325,6 +354,12 @@ class EvaluationPlots(_BasePlot):
             self.title = title
         else:
             self.title = "{}={}".format(linear_model_name, predicted_lbl)
+        self.verbose(msg="{}".format(self), caller=self.__class__.__name__)
+
+    def __str__(self):
+        lst = list(self.__dict__.items())
+        lst = list(filter(lambda x: not hasattr(x[1], '__iter__'), lst))
+        return str(lst)
 
     def __set_something(self, thing, self_thing, caller=None, expeted_type=None):
         _thing = thing
@@ -367,11 +402,12 @@ class EvaluationPlots(_BasePlot):
         :param predicted_lbl:
         :return:
         """
+        func_name = self.plot_predicted_vs_actual.__name__
         _df = self._set_df(df)
         _title = self._set_title(title)
         _actual_lbl = self._set_actual_lbl(actual_lbl)
         _predicted_lbl = self._set_predicted_lbl(predicted_lbl)
-
+        self.verbose("title={}, actual_lbl={},predicted_lbl={} ".format(_title, _actual_lbl, _predicted_lbl), func_name)
         if not xlim:
             xlim = {"min": _df[_actual_lbl].min(), "max": _df[_actual_lbl].max()}
             xlim["min"], xlim["max"] = xlim["min"] - abs(0.1 * xlim["min"]), xlim["max"] + abs(0.1 * xlim["max"])
@@ -379,6 +415,7 @@ class EvaluationPlots(_BasePlot):
             ylim = {"min": _df[_predicted_lbl].min(), "max": _df[_predicted_lbl].max()}
             ylim["min"], ylim["max"] = ylim["min"] - abs(0.1 * ylim["min"]), ylim["max"] + abs(0.1 * ylim["max"])
 
+        self.verbose("xlim={},ylim={}".format(xlim, ylim), func_name)
         ax = _df.plot(self.actual_lbl, self.predicted_lbl,
                       kind='scatter',
                       s=dot_size,
@@ -402,22 +439,27 @@ class EvaluationPlots(_BasePlot):
         This function prints and plots a confusion matrix.
         Normalization can be applied by setting `normalize=True`.
         """
+        func_name = self.plot_confusion_matrix.__name__
+
+        _title = self._set_title(title)
         size = len(classes_lst) * 1.5
         plt.gcf().set_size_inches(h=size, w=size)
-
         plt.imshow(confusion_matrix, interpolation='nearest', cmap=self.cmap)
-        plt.title(title)
+        plt.title(_title)
         plt.colorbar()
         tick_marks = np.arange(len(classes_lst))
         plt.xticks(tick_marks, classes_lst, rotation=45)
         plt.yticks(tick_marks, classes_lst)
         _confusion_matrix = confusion_matrix
+        self.verbose("classes_lst={}".format(classes_lst), func_name)
+        self.verbose("normalize={},title={} ".format(normalize, _title), func_name)
         if normalize:
             _confusion_matrix = _confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
             # print("Normalized confusion matrix:\n{}".format(_confusion_matrix))
 
         thresh = _confusion_matrix.max() / 2.0
 
+        # def of internal unction : format_confusion_matrix_cell
         def format_confusion_matrix_cell(val, is_normlize):
             if is_normlize:
                 txt = str(number_formating + "%").format(100.0 * round(val, 2))
@@ -434,5 +476,5 @@ class EvaluationPlots(_BasePlot):
                      color="white" if _confusion_matrix[i, j] > thresh else "black", )
 
         plt.tight_layout()
-        plt.ylabel('True label')
-        plt.xlabel('Predicted label')
+        plt.ylabel("True label:{}".format(self.actual_lbl))
+        plt.xlabel('Predicted label:{}'.format(self.predicted_lbl))
