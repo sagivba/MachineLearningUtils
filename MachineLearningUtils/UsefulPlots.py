@@ -13,7 +13,7 @@ import sklearn
 # else:
 #     from sklearn.model_selection import validation_curve
 
-__version__ = '0.0.5'
+__version__ = '0.1.0'
 
 
 def cm2inch(*tupl):
@@ -355,6 +355,93 @@ class DataPlots(_BasePlot):
 
         return _fig
 
+    @staticmethod
+    def show_values(pc, fmt="%.2f", **kw):
+        '''
+        Heatmap with text in each cell with matplotlib's pyplot
+        Source: https://stackoverflow.com/a/25074150/395857
+        By HYRY
+        '''
+
+        pc.update_scalarmappable()
+        ax = pc.axes
+        for p, color, value in zip(pc.get_paths(), pc.get_facecolors(), pc.get_array()):
+            x, y = p.vertices[:-2, :].mean(0)
+            if np.all(color[:3] > 0.5):
+                color = (0.0, 0.0, 0.0)
+            else:
+                color = (1.0, 1.0, 1.0)
+            ax.text(x, y, fmt % value, ha="center", va="center", color=color, **kw)
+
+    @staticmethod
+    def heatmap(auc, title="heatmap", xlabel="x", ylabel="y", xticklabels=[], yticklabels=[], figure_width=40,
+                figure_height=20,
+                correct_orientation=False, cmap='RdBu'):
+        """
+
+        Inspired by:
+        - https://stackoverflow.com/a/16124677/395857
+        - https://stackoverflow.com/a/25074150/395857
+        :param auc:
+        :param title:
+        :param xlabel:
+        :param ylabel:
+        :param xticklabels:
+        :param yticklabels:
+        :param figure_width:
+        :param figure_height:
+        :param correct_orientation:
+        :param cmap:
+        :return:
+        """
+
+        func_name = DataPlots.heatmap.__name__
+        # Plot it out
+        fig, ax = plt.subplots()
+        c = ax.pcolor(auc, edgecolors='k', linestyle='dashed', linewidths=0.2, cmap=cmap)
+
+        # put the major ticks at the middle of each cell
+        ax.set_yticks(np.arange(auc.shape[0]) + 0.5, minor=False)
+        ax.set_xticks(np.arange(auc.shape[1]) + 0.5, minor=False)
+
+        # set tick labels
+        # ax.set_xticklabels(np.arange(1,AUC.shape[1]+1), minor=False)
+        ax.set_xticklabels(xticklabels, minor=False)
+        ax.set_yticklabels(yticklabels, minor=False)
+
+        # set title and x/y labels
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+
+        # Remove last blank column
+        plt.xlim((0, auc.shape[1]))
+
+        # Turn off all the ticks
+        ax = plt.gca()
+        for t in ax.xaxis.get_major_ticks():
+            t.tick1On, t.tick2On = False, False
+        for t in ax.yaxis.get_major_ticks():
+            t.tick1On, t.tick2On = False, False
+
+        # Add color bar
+        plt.colorbar(c)
+
+        # Add text in each cell
+        DataPlots.show_values(c)
+
+        # Proper orientation (origin at the top left instead of bottom left)
+        if correct_orientation:
+            ax.invert_yaxis()
+            ax.xaxis.tick_top()
+
+            # resize
+        fig = plt.gcf()
+        # fig.set_size_inches(cm2inch(40, 20))
+        # fig.set_size_inches(cm2inch(40*4, 20*4))
+        fig.set_size_inches(cm2inch(figure_width, figure_height))
+        return ax
+
 
 class EvaluationPlots(_BasePlot):
     def __init__(self,
@@ -520,90 +607,6 @@ class EvaluationPlots(_BasePlot):
         """
         pass
 
-    def show_values(self, pc, fmt="%.2f", **kw):
-        '''
-        Heatmap with text in each cell with matplotlib's pyplot
-        Source: https://stackoverflow.com/a/25074150/395857
-        By HYRY
-        '''
-
-        pc.update_scalarmappable()
-        ax = pc.axes
-        for p, color, value in zip(pc.get_paths(), pc.get_facecolors(), pc.get_array()):
-            x, y = p.vertices[:-2, :].mean(0)
-            if np.all(color[:3] > 0.5):
-                color = (0.0, 0.0, 0.0)
-            else:
-                color = (1.0, 1.0, 1.0)
-            ax.text(x, y, fmt % value, ha="center", va="center", color=color, **kw)
-
-    def heatmap(self, auc, title="heatmap", xlabel="x", ylabel="y", xticklabels=[], yticklabels=[], figure_width=40,
-                figure_height=20,
-                correct_orientation=False, cmap='RdBu'):
-        """
-
-        Inspired by:
-        - https://stackoverflow.com/a/16124677/395857
-        - https://stackoverflow.com/a/25074150/395857
-        :param auc:
-        :param title:
-        :param xlabel:
-        :param ylabel:
-        :param xticklabels:
-        :param yticklabels:
-        :param figure_width:
-        :param figure_height:
-        :param correct_orientation:
-        :param cmap:
-        :return:
-        """
-
-        func_name = self.plot_classification_report.__name__
-        # Plot it out
-        fig, ax = plt.subplots()
-        c = ax.pcolor(auc, edgecolors='k', linestyle='dashed', linewidths=0.2, cmap=cmap)
-
-        # put the major ticks at the middle of each cell
-        ax.set_yticks(np.arange(auc.shape[0]) + 0.5, minor=False)
-        ax.set_xticks(np.arange(auc.shape[1]) + 0.5, minor=False)
-
-        # set tick labels
-        # ax.set_xticklabels(np.arange(1,AUC.shape[1]+1), minor=False)
-        ax.set_xticklabels(xticklabels, minor=False)
-        ax.set_yticklabels(yticklabels, minor=False)
-
-        # set title and x/y labels
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-
-        # Remove last blank column
-        plt.xlim((0, auc.shape[1]))
-
-        # Turn off all the ticks
-        ax = plt.gca()
-        for t in ax.xaxis.get_major_ticks():
-            t.tick1On, t.tick2On = False, False
-        for t in ax.yaxis.get_major_ticks():
-            t.tick1On, t.tick2On = False, False
-
-        # Add color bar
-        plt.colorbar(c)
-
-        # Add text in each cell
-        self.show_values(c)
-
-        # Proper orientation (origin at the top left instead of bottom left)
-        if correct_orientation:
-            ax.invert_yaxis()
-            ax.xaxis.tick_top()
-
-            # resize
-        fig = plt.gcf()
-        # fig.set_size_inches(cm2inch(40, 20))
-        # fig.set_size_inches(cm2inch(40*4, 20*4))
-        fig.set_size_inches(cm2inch(figure_width, figure_height))
-        return ax
 
     def plot_classification_report(self, classification_report, title='Classification report ', cmap='RdYlGn'):
         '''
@@ -636,7 +639,7 @@ class EvaluationPlots(_BasePlot):
         figure_width = 25
         figure_height = len(class_names) + 7
         correct_orientation = False
-        ax = self.heatmap(np.array(plotMat), title, xlabel, ylabel, xticklabels, yticklabels, figure_width,
-                          figure_height,
-                          correct_orientation, cmap=cmap)
+        ax = DataPlots.heatmap(np.array(plotMat), title, xlabel, ylabel, xticklabels, yticklabels, figure_width,
+                               figure_height,
+                               correct_orientation, cmap=cmap)
         return ax

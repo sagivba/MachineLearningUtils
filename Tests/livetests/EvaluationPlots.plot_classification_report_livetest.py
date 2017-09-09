@@ -1,3 +1,12 @@
+from matplotlib import pyplot as plt
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier
+
+from MachineLearningUtils.DatasetTools import DatasetsTools
+from MachineLearningUtils.ModelsUtils import ModelUtils
+from MachineLearningUtils.UsefulPlots import EvaluationPlots
+
+
 # load iris data into DataFrame
 prd_lbl, actl_lbl = "PrdictedIrisClass", "IrisClass"
 iris_df = DatasetsTools(datasets.load_iris).data_as_df(target_column_name="IrisClass")

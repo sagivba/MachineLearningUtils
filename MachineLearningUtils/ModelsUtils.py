@@ -1,6 +1,6 @@
 import pandas as pd
 import sklearn
-from  functools import partial
+from sklearn.metrics import classification_report
 
 if sklearn.__version__ < "18.0":
     from sklearn.cross_validation import train_test_split as trn_tst_split
@@ -253,3 +253,8 @@ class ModelUtils():
             _confusion_matrix,
             index=self.model.classes_,
             columns=self.model.classes_)
+
+    def classification_report(self, y_true=None, y_pred=None, target_names=None):
+
+        self.cr = classification_report(y_true=y_true, y_pred=y_pred, target_names=target_names)
+        return self.cr

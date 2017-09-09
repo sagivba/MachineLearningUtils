@@ -24,4 +24,7 @@ evp = EvaluationPlots(df=results_df, actual_lbl=actl_lbl, predicted_lbl=prd_lbl)
 evp.plot_confusion_matrix(confusion_matrix=mu.confusion_matrix(), classes_lst=mu.model.classes_,
                           title="Iris-confusion_matrix")
 # plt.savefig("confusion_matrix.png", bbox_inches='tight')
+cr = mu.classification_report(y_pred=results_df[prd_lbl], y_true=results_df[actl_lbl])
+print(cr)
+evp.plot_classification_report(cr)
 plt.show()
