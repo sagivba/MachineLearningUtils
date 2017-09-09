@@ -17,6 +17,10 @@ class ModelInfo():
         self.clf = clf
         return
 
+    def __str__(self):
+        return ","
+        join(self.model_name, self.actual_lbl)
+        )
     def as_dict(self):
         return dict(self)
 
@@ -45,3 +49,7 @@ class LinearModelInfo(ModelInfo):
         self.mae = mae,
         self.formula = formula
         pass
+
+    def __str__(self):
+        return ","
+        join(self.model_name, self.actual_lbl)

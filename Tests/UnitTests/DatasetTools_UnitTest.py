@@ -5,7 +5,7 @@ from sklearn import datasets
 from MachineLearningUtils.DatasetTools import DatasetsTools
 
 
-class TestDatasetsTools(unittest.TestCase):
+class DatasetsToolsTestCase(unittest.TestCase):
     def setUp(self):
         self.boston_dtst = DatasetsTools(datasets.load_boston)
         self.iris_dtst = DatasetsTools(datasets.load_iris)

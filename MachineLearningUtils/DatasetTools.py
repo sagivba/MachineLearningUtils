@@ -21,6 +21,9 @@ class DatasetsTools():
         self.info = _info
         return self.info
 
+    def __str__(self):
+        return self.info
+
     def data_as_df(self, target_column_name="Target", clean_colmns_names=True):
         """
         conveert sklearn.datasets.load_X (Bunch) into pandas.DataFrame

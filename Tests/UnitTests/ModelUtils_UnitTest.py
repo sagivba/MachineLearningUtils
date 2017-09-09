@@ -7,7 +7,7 @@ from MachineLearningUtils.DatasetTools import DatasetsTools
 from MachineLearningUtils.ModelsUtils import ModelUtils
 
 
-class TestModelUtils(unittest.TestCase):
+class ModelUtilsTestCase(unittest.TestCase):
     def setUp(self):
         ds = DatasetsTools(datasets.load_iris)
         self.iris_df = ds.data_as_df(target_column_name="IrisClass")

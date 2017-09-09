@@ -1,5 +1,6 @@
 import pandas as pd
 import sklearn
+from  functools import partial
 
 if sklearn.__version__ < "18.0":
     from sklearn.cross_validation import train_test_split as trn_tst_split
@@ -70,7 +71,6 @@ class ModelUtils():
         self.actual_lbl = actual_lbl
         self.test_size = test_size
         self.random_state = random_state
-
         if (predicted_lbl or actual_lbl) and self.df is None:
             raise ValueError("predicted_lbl or actual_lbl are defined but df is None")
         if predicted_lbl in self.columns_lst:
@@ -92,7 +92,14 @@ class ModelUtils():
             raise TypeError("{}: type of {} is not {}".format(caller, _thing, expeted_type))
         return _thing
 
+
     def __set_some_df(self, df, self_some_df):
+        _df = df
+        if not isinstance(_df, pd.DataFrame):
+            _df = self_some_df
+        return _df
+
+    def _set_some_df(self, self_some_df, df):
         _df = df
         if not isinstance(_df, pd.DataFrame):
             _df = self_some_df

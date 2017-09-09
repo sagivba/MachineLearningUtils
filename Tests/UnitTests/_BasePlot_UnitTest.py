@@ -9,7 +9,7 @@ from MachineLearningUtils.UsefulPlots import _BasePlot
 from MachineLearningUtils.DatasetTools import DatasetsTools
 
 
-class Test_BasePlot(unittest.TestCase):
+class _BasePlotTestCase(unittest.TestCase):
     def setUp(self):
         self.iris_df = DatasetsTools(datasets.load_iris).data_as_df(target_column_name="target")
         self.boston_df = DatasetsTools(datasets.load_boston).data_as_df()

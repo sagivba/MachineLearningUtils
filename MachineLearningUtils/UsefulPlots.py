@@ -4,8 +4,29 @@ import numpy as np
 import pandas as pd
 from matplotlib import cm
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import classification_report
+
+import sklearn
+
+# if sklearn.__version__ < "18.0":
+#     from sklearn.cross_validation import validation_curve
+# else:
+#     from sklearn.model_selection import validation_curve
 
 __version__ = '0.0.5'
+
+
+def cm2inch(*tupl):
+    '''
+    Specify figure size in centimeter in matplotlib
+    Source: https://stackoverflow.com/a/22787457/395857
+    By gns-ank
+    '''
+    inch = 2.54
+    if type(tupl[0]) == tuple:
+        return tuple(i / inch for i in tupl[0])
+    else:
+        return tuple(i / inch for i in tupl)
 
 
 class _BasePlot():
@@ -442,8 +463,8 @@ class EvaluationPlots(_BasePlot):
         func_name = self.plot_confusion_matrix.__name__
 
         _title = self._set_title(title)
-        size = len(classes_lst) * 1.5
-        plt.gcf().set_size_inches(h=size, w=size)
+        size = len(classes_lst) * 2.5
+        plt.gcf().set_size_inches(cm2inch(size, size))
         plt.imshow(confusion_matrix, interpolation='nearest', cmap=self.cmap)
         plt.title(_title)
         plt.colorbar()
@@ -478,3 +499,144 @@ class EvaluationPlots(_BasePlot):
         plt.tight_layout()
         plt.ylabel("True label:{}".format(self.actual_lbl))
         plt.xlabel('Predicted label:{}'.format(self.predicted_lbl))
+
+    def validation_curve(self, train_scores_df, valid_score_df):
+        """
+        source: http://scikit-learn.org/stable/modules/learning_curve.html
+        Every estimator has its advantages and drawbacks.
+        Its generalization error can be decomposed in terms of bias, variance and noise.
+        The bias of an estimator is its average error for different training sets.
+        The variance of an estimator indicates how sensitive it is to varying training sets.
+        Noise is a property of the data.
+        Bias and variance are inherent properties of estimators and we usually have to
+        select learning algorithms and hyperparameters so that both bias and variance are
+        as low as possible (see Bias-variance dilemma).
+        Another way to reduce the variance of a model is to use more training data.
+        However, you should only collect more training data if the true function is too
+        complex to be approximated by an estimator with a lower variance.
+        :param train_scores_df:
+        :param valid_score_df:
+        :return:
+        """
+        pass
+
+    def show_values(self, pc, fmt="%.2f", **kw):
+        '''
+        Heatmap with text in each cell with matplotlib's pyplot
+        Source: https://stackoverflow.com/a/25074150/395857
+        By HYRY
+        '''
+
+        pc.update_scalarmappable()
+        ax = pc.axes
+        for p, color, value in zip(pc.get_paths(), pc.get_facecolors(), pc.get_array()):
+            x, y = p.vertices[:-2, :].mean(0)
+            if np.all(color[:3] > 0.5):
+                color = (0.0, 0.0, 0.0)
+            else:
+                color = (1.0, 1.0, 1.0)
+            ax.text(x, y, fmt % value, ha="center", va="center", color=color, **kw)
+
+    def heatmap(self, auc, title="heatmap", xlabel="x", ylabel="y", xticklabels=[], yticklabels=[], figure_width=40,
+                figure_height=20,
+                correct_orientation=False, cmap='RdBu'):
+        """
+
+        Inspired by:
+        - https://stackoverflow.com/a/16124677/395857
+        - https://stackoverflow.com/a/25074150/395857
+        :param auc:
+        :param title:
+        :param xlabel:
+        :param ylabel:
+        :param xticklabels:
+        :param yticklabels:
+        :param figure_width:
+        :param figure_height:
+        :param correct_orientation:
+        :param cmap:
+        :return:
+        """
+
+        func_name = self.plot_classification_report.__name__
+        # Plot it out
+        fig, ax = plt.subplots()
+        c = ax.pcolor(auc, edgecolors='k', linestyle='dashed', linewidths=0.2, cmap=cmap)
+
+        # put the major ticks at the middle of each cell
+        ax.set_yticks(np.arange(auc.shape[0]) + 0.5, minor=False)
+        ax.set_xticks(np.arange(auc.shape[1]) + 0.5, minor=False)
+
+        # set tick labels
+        # ax.set_xticklabels(np.arange(1,AUC.shape[1]+1), minor=False)
+        ax.set_xticklabels(xticklabels, minor=False)
+        ax.set_yticklabels(yticklabels, minor=False)
+
+        # set title and x/y labels
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+
+        # Remove last blank column
+        plt.xlim((0, auc.shape[1]))
+
+        # Turn off all the ticks
+        ax = plt.gca()
+        for t in ax.xaxis.get_major_ticks():
+            t.tick1On, t.tick2On = False, False
+        for t in ax.yaxis.get_major_ticks():
+            t.tick1On, t.tick2On = False, False
+
+        # Add color bar
+        plt.colorbar(c)
+
+        # Add text in each cell
+        self.show_values(c)
+
+        # Proper orientation (origin at the top left instead of bottom left)
+        if correct_orientation:
+            ax.invert_yaxis()
+            ax.xaxis.tick_top()
+
+            # resize
+        fig = plt.gcf()
+        # fig.set_size_inches(cm2inch(40, 20))
+        # fig.set_size_inches(cm2inch(40*4, 20*4))
+        fig.set_size_inches(cm2inch(figure_width, figure_height))
+        return ax
+
+    def plot_classification_report(self, classification_report, title='Classification report ', cmap='RdYlGn'):
+        '''
+        Plot scikit-learn classification report.
+        Extension based on https://stackoverflow.com/a/31689645/395857
+        '''
+        func_name = self.plot_classification_report.__name__
+        lines = classification_report.split('\n')
+
+        classes = []
+        plotMat = []
+        support = []
+        class_names = []
+        for line in lines[2: (len(lines) - 2)]:
+            t = line.strip().split()
+            if len(t) < 2: continue
+            classes.append(t[0])
+            v = [float(x) for x in t[1: len(t) - 1]]
+            support.append(int(t[-1]))
+            class_names.append(t[0])
+            print(v)
+            plotMat.append(v)
+
+        self.verbose('plotMat: {0}'.format(plotMat), func_name)
+        self.verbose('support: {0}'.format(support), func_name)
+
+        xlabel, ylabel = 'Metrics', 'Classes'
+        xticklabels = ['Precision', 'Recall', 'F1-score']
+        yticklabels = ['{0} ({1})'.format(class_names[idx], sup) for idx, sup in enumerate(support)]
+        figure_width = 25
+        figure_height = len(class_names) + 7
+        correct_orientation = False
+        ax = self.heatmap(np.array(plotMat), title, xlabel, ylabel, xticklabels, yticklabels, figure_width,
+                          figure_height,
+                          correct_orientation, cmap=cmap)
+        return ax

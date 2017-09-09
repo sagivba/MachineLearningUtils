@@ -8,6 +8,7 @@ from MachineLearningUtils.UsefulPlots import DataPlots
 
 def main():
     iris_dtst = DatasetsTools(datasets.load_iris)
+    # print(str(iris_dtst))
     iris_df = iris_dtst.data_as_df()
     print(iris_df.info())
     plotter = DataPlots(df=iris_df, ggplot=True, cmap=cm.jet)

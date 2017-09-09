@@ -10,7 +10,9 @@ pd.set_option('expand_frame_repr', False)
 
 # load boston data into DataFrame
 prd_lbl, target = "PrdictedPrice", "Price"
-boston_df = DatasetsTools(datasets.load_boston).data_as_df(target_column_name=target)
+boston_dtst = DatasetsTools(datasets.load_boston).data_as_df(target_column_name=target)
+print(boston_dtst.describe())
+boston_df = boston_dtst.data_as_df(target_column_name=target)
 print(boston_df.head())
 # set linear model
 lm = LinearRegression()

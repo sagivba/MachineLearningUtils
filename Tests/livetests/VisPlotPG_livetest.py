@@ -16,8 +16,11 @@ def main():
     # exit()
     plotter = VisPlotPlayGround(df=_df, ggplot=True, cmap=cm.jet)
     cmaps = [m for m in cm.datad if not m.endswith("_r")]
-    print(sorted(cmaps))
-    for c in sorted(cmaps)[0:5]:
+    print("\n".join(sorted(cmaps)))
+    print(list(filter(lambda c: str(c).find('Rd') > -1, sorted(cmaps))))
+
+    # for c in filter(lambda c: str(c).find('Rd')>-1, sorted(cmaps)): #[0:5]:
+    for c in sorted(cmaps):  # [0:5]:
         plotter.show_colormap(c)
     plt.show()
 
