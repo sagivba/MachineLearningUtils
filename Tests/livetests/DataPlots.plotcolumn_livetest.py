@@ -7,15 +7,29 @@ from MachineLearningUtils.UsefulPlots import DataPlots
 
 
 def main():
-    iris_dtst = DatasetsTools(datasets.load_iris)
-    # print(str(iris_dtst))
-    iris_df = iris_dtst.data_as_df()
-    print(iris_df.info())
-    plotter = DataPlots(df=iris_df, ggplot=True, cmap=cm.jet)
-    sizes_lst = [(4, 4), (6, 4), (6, 4), (12, 8), (7, 7), (6, 6), (6, 6), (12, 12)]
-    for i, col in enumerate(list(iris_df)):
-        plotter.plot_column(data_column=iris_df[col], figsize=sizes_lst[i])
-    plt.show()
+    boston_dstl = DatasetsTools(datasets.load_boston)
+    # print(str(boston_dstl))
+    boston_df = boston_dstl.data_as_df()
+    print(boston_dstl.info)
+
+    def set_CHAS(n):
+        if (n == 1):
+            return "bounds river"
+        else:
+            None
+
+    boston_df.CHAS = boston_df.CHAS.apply(set_CHAS)
+    plotter = DataPlots(df=boston_df, ggplot=True, cmap=cm.jet)
+    sizes_lst = [(4, 4), (6, 4), (6, 4), (12, 8), (7, 7), (6, 6), (6, 6), (12, 12), (12, 12), (12, 12), (12, 12),
+                 (12, 12), (12, 12), (12, 12), (12, 12)]
+    # plotter.plot_column(data_column=boston_df.CHAS)
+    # plt.show()
+
+
+    for i, col in enumerate(list(boston_df)):
+        print(col)
+        plotter.plot_column(data_column=boston_df[col], figsize=sizes_lst[i])
+        plt.show()
     return
 
 

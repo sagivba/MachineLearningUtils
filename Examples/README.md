@@ -47,3 +47,10 @@ You can create colored_acatter_matrix very easily ( 3 lines of code):
     resulting this plot:
 ![evaluate results using plot_confusion_matrix](confusion_matrix.png)
 
+- evaluate results using plot_confusion_matrix
+```python
+    cr = mu.classification_report(y_pred=results_df[prd_lbl], y_true=results_df[actl_lbl])
+    evp.plot_classification_report(cr)
+    plt.savefig("confusion_matrix.png", bbox_inches='tight')
+```
+![evaluate results using plot_classification_report](classification_report.png)

@@ -138,7 +138,8 @@ class _BasePlot():
                 sorted_uniq = sorted(map(to_str, uniq_list))
                 map_dict = dict([(k, i) for i, k in enumerate(sorted_uniq)])
                 _z_col = z.map(lambda x: map_dict[x])
-            scaler = MinMaxScaler(copy=True, feature_range=(30, 120))
+            scaler = MinMaxScaler(copy=True, feature_range=(16, 16 ** 3))
+
             _Z = _z_col.to_frame()
             scaler.fit(_Z)
             _Z = scaler.transform(_Z)
@@ -232,6 +233,9 @@ class DataPlots(_BasePlot):
             _ax.set_title(_title, fontsize=14)
         _ax.set_xlabel(x.name, fontsize=12)
         _ax.set_ylabel(y.name, fontsize=12)
+        self.verbose("s={}, x_lable = {:15}, y_lable = {:15}, title= {:15}".format(s, _ax.xaxis.label._text,
+                                                                                   _ax.yaxis.label._text,
+                                                                                   _ax.title._text), func_name)
         _ax.grid(True, linestyle='-', color='0.75')
         # scatter with colormap mapping to z value
         # Nones replaced with stirng
@@ -243,9 +247,6 @@ class DataPlots(_BasePlot):
         # print( pd.Series(colors).unique())
         _ax.scatter(x, y, s=s, c=colors, marker='o', cmap=self.cmap);
 
-        self.verbose("s={}, x_lable = {:15}, y_lable = {:15}, title= {:15}".format(s, _ax.xaxis.label._text,
-                                                                                   _ax.yaxis.label._text,
-                                                                                   _ax.title._text), func_name)
         return _ax
 
     def plot_column(self, data_column, fig=None, figsize=None):
@@ -265,15 +266,17 @@ class DataPlots(_BasePlot):
         _fig = self._set_fig(fig)
         axes = []
         plot_lst = plot_dict[str(_data.dtype)]
-
+        title = _data.name
+        self.verbose(title, func_name)
         for i, plitm in enumerate(plot_lst):
             axes.append(_fig.add_subplot(len(plot_lst), 1, i + 1))
             _kind = plitm['kind']
             if str(_data.dtype) in ['object', 'int64', 'bool'] and len(_data.unique()) < 50:
-                _df = _data.apply(pd.value_counts)
-                x_val = list(_df)
-                y_val = _df.sum()
-                ax_title = "{}-{}-{}".format(_data.name, _kind, 'count')
+                # _df = _data.apply(pd.value_counts)
+                y_val = _data.value_counts(dropna=False)
+                print(y_val.head())
+
+                ax_title = "{}-{}-{}".format(title, _kind, 'count')
                 axes[i].set_title(ax_title)
                 _ylim = [0, 1.1 * max(y_val)]
                 axes[i].set_ylim(_ylim)
@@ -333,25 +336,32 @@ class DataPlots(_BasePlot):
 
         _df_copy = _df.copy()
         # Plot the data.
-        for i, col_x in enumerate(_df):
-            for j, col_y in enumerate(_df):
+        for i, col_x in enumerate(sorted(list(_df), reverse=True)):
+            for j, col_y in enumerate(sorted(list(_df))):
+
+                self.verbose("{}-{}".format(col_x, col_y), func_name)
                 # print("{},{}==>{},{}".format(i, j, col_x, col_y))
                 _df = _df_copy.copy()
-                # _df["_z2color"] = _z2color
                 _z2color = _z2color[(_df[col_x].notnull()) & (_df[col_y].notnull())]
                 _df = _df[(_df[col_x].notnull()) & (_df[col_y].notnull())]
+                try:
+                    axes[i, j] = self.colored_scatter(x=_df[col_x], y=_df[col_y], z2color=_z2color, s=20, ax=axes[i, j])
+                except Exception as e:
+                    print("{}: ({},{}) - Exception {}".format(func_name, col_x, col_y, e))
 
-                axes[i, j] = self.colored_scatter(x=_df[col_x], y=_df[col_y], z2color=_z2color, s=20, ax=axes[i, j])
-
+                print("\n")
         # Label the diagonal subplots...
         for i, label in enumerate(list(_df)):
+            self.verbose("lable={}".format(label), func_name)
             axes[i, i].annotate(label, (0.5, 0.5), xycoords='axes fraction',
                                 ha='center', va='center')
-
+        print("\n")
         # Turn on the proper x or y axes ticks.
         for i, j in zip(range(_ncols), itertools.cycle((-1, 0))):
+            print("set_visible:{},{}".format(i, j))
             axes[j, i].xaxis.set_visible(True)
             axes[i, j].yaxis.set_visible(True)
+        print("\n")
 
         return _fig
 
@@ -587,7 +597,7 @@ class EvaluationPlots(_BasePlot):
         plt.ylabel("True label:{}".format(self.actual_lbl))
         plt.xlabel('Predicted label:{}'.format(self.predicted_lbl))
 
-    def validation_curve(self, train_scores_df, valid_score_df):
+    def learning_curve(self, train_scores_df, valid_score_df):
         """
         source: http://scikit-learn.org/stable/modules/learning_curve.html
         Every estimator has its advantages and drawbacks.

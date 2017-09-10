@@ -1,4 +1,5 @@
 from sklearn import datasets
+from matplotlib import pyplot as plt
 
 from MachineLearningUtils.DatasetTools import DatasetsTools
 from MachineLearningUtils.UsefulPlots import DataPlots
@@ -11,10 +12,10 @@ def main():
     print("columns: {}".format(list(iris_df)))
     print(iris_dtst.info)
     # iris-colored_acatter_matrix in 3 lines of code
-    plotter = DataPlots(df=iris_df, ggplot=True)
+    plotter = DataPlots(df=iris_df, ggplot=True, is_verbose=True)
     fig = plotter.colored_scatter_matrix(df=iris_df, colored_column_name="Target")
-    fig.savefig("iris-colored_acatter_matrix.png")
-
+    # fig.savefig("iris-colored_acatter_matrix.png")
+    plt.show()
     return
 
 

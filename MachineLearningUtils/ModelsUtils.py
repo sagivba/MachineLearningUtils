@@ -144,7 +144,10 @@ class ModelUtils():
         col_set = set(columns_lst)
         df_col_set = set(list(df))
         if col_set - df_col_set != set():
-            raise ValueError("col_lst has columns name that does not exists in the DataFrame columns")
+            msg = "col_lst has columns name that does not exists in the DataFrame columns:{}".format(
+                str(col_set - df_col_set))
+            print(msg)
+            raise ValueError(msg)
         return True
 
     def split_data_to_train_test(self, df=None, test_size=None):
@@ -206,21 +209,21 @@ class ModelUtils():
 
         return _df
 
-    def test_model(self, test_df=None, columns_lst=None):
+    def test_model(self, test_df=None):
         _df = test_df
         if not isinstance(_df, pd.DataFrame):
             _df = self.test_df
         if self.predicted_lbl in list(_df):
             _df.drop(self.predicted_lbl, axis=1, inplace=True)
-
-        X_df, y_s = self.get_X_df_and_y_s(_df, columns_lst)
-
+        columns_lst = self._x_lbl
+        # X_df, y_s = self.get_X_df_and_y_s(_df, columns_lst)
+        X_df = self.get_X_df(_df)
         #  of course we tont fit test...
         pred_df = pd.DataFrame(data={self.predicted_lbl: self.model.predict(X_df)}, index=_df.index)
 
         _df = pd.concat([_df, pred_df], axis=1, join_axes=[_df.index])
         # print np.log10(_df[self.predicted_lbl]+1)
-        if not test_df:
+        if test_df is None:
             self.test_df = _df
         return _df
 

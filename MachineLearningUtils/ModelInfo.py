@@ -20,7 +20,7 @@ class ModelInfo():
     def __str__(self):
         return ","
         join(self.model_name, self.actual_lbl)
-        )
+
     def as_dict(self):
         return dict(self)
 

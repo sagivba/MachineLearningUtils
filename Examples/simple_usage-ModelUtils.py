@@ -27,4 +27,6 @@ evp.plot_confusion_matrix(confusion_matrix=mu.confusion_matrix(), classes_lst=mu
 cr = mu.classification_report(y_pred=results_df[prd_lbl], y_true=results_df[actl_lbl])
 print(cr)
 evp.plot_classification_report(cr)
-plt.show()
+plt.savefig("classification_report.png", bbox_inches='tight')
+
+# plt.show()
