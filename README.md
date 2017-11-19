@@ -17,9 +17,14 @@ Take a look [here](Examples/README.md) for more useful code examples
 
 
 ## ModelUtils
-utils for easier skitlearn classifier handling
+utils for easier skitlearn *classifier* handling
 ### classes:
 - [ModelUtils](README.md#class-modelutils)
+
+## LinearModelUtils
+utils for easier skitlearn *linear* models  handling
+### classes:
+- [LinearModelUtils](README.md#class-linearmodelutils)
 
 ## UsefulPlots
 My toolbox of useful plots classes.
@@ -28,6 +33,11 @@ My toolbox of useful plots classes.
 - [EvaluationPlots](README.md#class-evaluationplots) - Plots that helps to evaluate models
 - [VisPlotPlayGround](README.md#class-visplotplayground)
 
+##CommonFeatureEngineering
+drop list of columns, fillna using smarter functions, map columns values in one line and more goodies..
+### classes:
+- [DataFrameManipulation](README.md#class-dataframemanipulation)
+
 ## DatasetsTools
 ### classes:
 - [DatasetsTools](README.md#class-datasetstools)
@@ -35,7 +45,7 @@ My toolbox of useful plots classes.
 ***
 
 
-# What indide the modules...
+# What inside the modules...
 ## module ModelUtils
 ### class ModelUtils
 utils for easier skitlearn classifier handling
